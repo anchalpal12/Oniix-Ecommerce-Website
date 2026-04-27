@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin: 20px 0 10px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .cart-summary {
+      margin-top: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .place-order-btn {
+      margin-top: 30px;
+      background-color: #2ecc71;
+      color: #fff;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .place-order-btn:hover {
+      background-color: #27ae60;
+    }
+
+    .success-message {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .total {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Checkout</h1>
+
+    <div class="section-title">Shipping Details</div>
+    <div class="form-group">
+      <label for="name">Full Name*</label>
+      <input type="text" id="name" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address*</label>
+      <input type="email" id="email" required />
+    </div>
+
+    <div class="form-group">
+      <label for="address">Shipping Address*</label>
+      <textarea id="address" rows="3" required></textarea>
+    </div>
+
+    <div class="section-title">Cart Summary</div>
+    <div class="cart-summary" id="cartSummary"></div>
+    <div class="total" id="totalAmount"></div>
+
+    <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+
+    <div class="success-message" id="successMessage">
+      🎉 Your order has been placed successfully!
+    </div>
+  </div>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function renderCart() {
+      const summary = document.getElementById('cartSummary');
+      const totalElement = document.getElementById('totalAmount');
+      summary.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        summary.innerHTML = '<p>Your cart is empty.</p>';
+        totalElement.textContent = '';
+        return;
+      }
+
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <span>${item.name}</span>
+          <span>$${parseFloat(item.price).toFixed(2)}</span>
+        `;
+        summary.appendChild(div);
+        total += parseFloat(item.price);
+      });
+
+      totalElement.textContent = `Total: $${total.toFixed(2)}`;
+    }
+
+    async function placeOrder() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const successMsg = document.getElementById('successMessage');
+
+      if (!name || !email || !address) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      const totalAmount = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+      try {
+        const response = await fetch('/api/orders/place-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            address,
+            items: cart, // ✅ This matches backend
+            totalAmount
+          })
+        });
+
+        const result = await response.json();
+        console.log("Order Response:", result);
+
+        if (response.ok && result.success) {
+          localStorage.removeItem('cart');
+          renderCart();
+          successMsg.style.display = 'block';
+
+          document.getElementById('name').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('address').value = '';
+        } else {
+          alert("Order failed: " + (result.message || "Please try again later."));
+        }
+      } catch (error) {
+        console.error("Order error:", error);
+        alert("Something went wrong while placing your order.");
+      }
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

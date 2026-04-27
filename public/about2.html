@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About Mining Smart Glasses</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    background-color:white;
+    /* color: #eee; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    padding: 40px 20px;
+    letter-spacing: 0.03em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+    user-select:none;
+
+    /* Header fade in on load */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeSlideIn 0.8s ease forwards;
+    animation-delay: 0.15s;
+  }
+  
+  header h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    color:black;
+    text-shadow: 0 0 10px rgba(255,255,255,0.12);
+  }
+  
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 60px;
+
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    border-bottom: 2px solid #fafafa;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    color: black;
+    user-select:none;
+
+    /* Subtle text shadow on hover */
+    transition: text-shadow 0.4s ease;
+  }
+ 
+  
+  p {
+    font-size: 1.1rem;
+    color:black;
+    margin-bottom: 20px;
+  }
+
+  /* Features */
+  .features {
+    display: flex;
+    justify-content: space-between;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  
+  .feature {
+    flex: 1 1 270px;
+    /* background: linear-gradient(145deg, #1e1e1e, #202020); */
+    background-color:black;
+    /* box-shadow: 3px 3px 10px #0a0a0a, -3px -3px 10px #2b2b2b; */
+    border-radius: 14px;
+    padding: 25px 20px;
+    text-align: center;
+    color: #eee;
+    
+    user-select:none;
+    cursor: default;
+
+    /* initial fade below */
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .feature p{
+    color: white;
+  }
+  .feature.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .feature:hover {
+    transform: translateY(-8px);
+    box-shadow: 6px 6px 18px #0f0f0f, -6px -6px 20px #323232;
+  }
+  
+  .feature-icon {
+    font-size: 3.8rem;
+    margin-bottom: 16px;
+    color: #64d2ff;
+  }
+  
+  .feature-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    color: white;
+  }
+
+  /* Timeline / History */
+  .history-timeline {
+    border-left: 3px solid orange;
+    padding-left: 20px;
+    position: relative;
+  }
+  .history-event {
+    margin-bottom: 30px;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .history-event.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .history-year {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+    color: black;
+  }
+  .history-text {
+    font-size: 1rem;
+    color: black;
+    margin: 0;
+  }
+
+  /* Testimonials */
+  .testimonials {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  .testimonial {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 25px;
+ border: 2px dotted orange;
+    font-style: italic;
+    color: black;
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .testimonial.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .testimonial::before {
+    content: "“";
+    font-size: 3rem;
+    position: absolute;
+    left: 15px;
+    top: 5px;
+    color:orange;
+    user-select:none;
+  }
+  .testimonial-author {
+    margin-top: 12px;
+    font-weight: 700;
+    font-style: normal;
+    color: black;
+  }
+
+  /* FAQ */
+  .faq-item {
+    margin-bottom: 24px;
+    border-radius: 10px;
+    background: white;
+    padding: 18px 22px;
+    border: 2px dotted orange;
+    cursor: pointer;
+    user-select:none;
+    /* Smooth transition for background change */
+    transition: background-color 0.3s ease;
+  }
+  .faq-item:hover {
+    background-color:orange;
+    color: white;
+  }
+  .faq-item.open {
+    background-color: #333;
+  }
+  .faq-question {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+    outline: none;
+  }
+  .faq-answer {
+    font-size: 1rem;
+    color:black;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.5s ease, opacity 0.5s ease;
+    padding-left: 15px;
+    opacity: 0;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 300px;
+    padding-top: 10px;
+    opacity: 1;
+  }
+
+  /* Awards */
+  .awards-list {
+    list-style: disc;
+    padding-left: 20px;
+    color: black;
+    font-size: 1.1rem;
+  }
+  .awards-list li {
+    margin-bottom: 10px;
+  }
+  .awards-title {
+    margin-bottom: 14px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    
+  }
+
+  /* Call to action */
+  .cta {
+    text-align: center;
+  }
+  
+  .cta button {
+    background-color:white;
+    border: none;
+    color: #121212;
+    font-weight: 700;
+    font-size: 1.3rem;
+    padding: 16px 48px;
+    border-radius: 12px;
+    border: 2px dotted orange;
+    cursor: pointer;
+    user-select:none;
+ 
+    transition: background-color 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease;
+  }
+  
+  .cta button:hover,
+  .cta button:focus {
+    background-color:black;
+    color: white;
+    border: none;
+  
+    outline: none;
+    transform: scale(1.05);
+  }
+  .cta button:active {
+    transform: scale(0.97);
+  }
+
+  /* Keyframes for fade and slide-in */
+  @keyframes fadeSlideIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .features {
+      flex-direction: column;
+      gap: 35px;
+    }
+    main {
+      padding: 0 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>About Us</h1>
+</header>
+
+<main>
+  
+  <section aria-label="Company Overview" class="animate-section">
+    <h2>Our Mission</h2>
+    <p>
+      At Mining Smart Glasses, we are dedicated to revolutionizing the mining industry by integrating cutting-edge augmented reality technology with rugged, reliable wearable devices. Our mission is to enhance safety, efficiency, and communication for mining professionals worldwide through intelligent smart glasses specifically engineered for harsh environments.
+    </p>
+  </section>
+  
+  <section aria-label="Our Technology" class="animate-section">
+    <h2>Advanced Technology</h2>
+    <div class="features">
+      <article class="feature" tabindex="0">
+      
+         <img src="./images/pngwing.com - 2025-05-29T115058.969.png" height="200px" width="100%">
+        <h3 class="feature-title">Augmented Reality HUD</h3>
+        <p>Project real-time data and vital safety alerts directly in your field of vision without distraction, improving decision-making on site.</p>
+      </article>
+
+      <article class="feature" tabindex="0">
+                <img src="./images/pngwing.com - 2025-05-29T115317.090.png" height="200px" width="100%">
+        <h3 class="feature-title">Voice Control</h3>
+        <p>Hands-free interaction with smart assistants and communication tools enabling seamless workflow and collaboration.</p>
+      </article>
+      
+      <article class="feature" tabindex="0">
+                     <img src="./images/pngwing.com - 2025-05-29T115244.011.png" height="200px" width="100%">
+        <h3 class="feature-title">Long Battery Life</h3>
+        <p>Designed to last through long shifts with power-efficient components ensuring uninterrupted performance.</p>
+      </article>
+    </div>
+  </section>
+  
+  <section aria-label="Company History" class="animate-section">
+    <h2>Company History</h2>
+    <div class="history-timeline" aria-live="polite">
+      <div class="history-event">
+        <div class="history-year">2015</div>
+        <p class="history-text">Founded by a group of mining and AR technology experts dedicated to improving miner safety and productivity.</p>
+      </div>
+      <div class="history-event">
+        <div class="history-year">2017</div>
+        <p class="history-text">Launched first prototype smart glasses tested in several mining operations with positive safety impact.</p>
+      </div>
+      <div class="history-event">
+        <div class="history-year">2020</div>
+        <p class="history-text">Released commercially available Mining Smart Glasses X1 with full AR HUD and voice command technology.</p>
+      </div>
+      <div class="history-event">
+        <div class="history-year">2023</div>
+        <p class="history-text">Expanded globally with partnerships in North America, Australia, and Europe, advancing product innovation continuously.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Customer Testimonials" class="animate-section">
+    <h2>Customer Testimonials</h2>
+    <div class="testimonials">
+      <blockquote class="testimonial" tabindex="0">
+        <p>Mining Smart Glasses have transformed the way our team works underground. We stay safer and more connected than ever.</p>
+        <cite class="testimonial-author">— Sarah K., Safety Manager</cite>
+      </blockquote>
+      <blockquote class="testimonial" tabindex="0">
+        <p>The hands-free AR and voice control are game changers in our line of work. Highly recommended for any serious mining operation.</p>
+        <cite class="testimonial-author">— Tom W., Operations Supervisor</cite>
+      </blockquote>
+      <blockquote class="testimonial" tabindex="0">
+        <p>Excellent durability and battery life. These glasses are built to last through tough shifts and provide crucial data all day.</p>
+        <cite class="testimonial-author">— Emily F., Field Engineer</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section aria-label="Sustainability Commitment" class="animate-section">
+    <h2>Sustainability Commitment</h2>
+    <p>
+      We believe that technology should empower responsible mining. Our smart glasses contribute to reducing environmental impact by facilitating efficient operations and monitoring safety standards that minimize accidents and waste.
+    </p>
+    <p>
+      We continuously work with partners to ensure eco-friendly materials and sustainable practices are integrated into all stages of our products' lifecycle.
+    </p>
+  </section>
+
+  <section aria-label="Frequently Asked Questions" class="animate-section">
+    <h2>Frequently Asked Questions</h2>
+    <div id="faq">
+
+      <div class="faq-item">
+        <div class="faq-question" tabindex="0">What environments are the smart glasses designed for?</div>
+        <div class="faq-answer">
+          Our glasses are engineered specifically for harsh mining environments, capable of withstanding dust, moisture, temperature extremes, and impacts.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" tabindex="0">How long does the battery last?</div>
+        <div class="faq-answer">
+          Typical battery life is 10-12 hours under normal usage, suitable for full shift operations.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" tabindex="0">Do the glasses support software updates?</div>
+        <div class="faq-answer">
+          Yes, the software can be updated over-the-air to provide new features, security patches, and performance improvements.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" tabindex="0">Is training provided for new users?</div>
+        <div class="faq-answer">
+          We offer comprehensive training sessions to ensure effective and safe use of the technology in your operation.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section aria-label="Awards and Recognition" class="animate-section">
+    <h2>Awards &amp; Recognition</h2>
+    <ul class="awards-list">
+      <li>Global Mining Innovation Award 2021</li>
+      <li>Tech Safety Excellence in Wearables 2022</li>
+      <li>Green Mining Sustainability Award 2023</li>
+      <li>Best Augmented Reality Product - Mining Expo 2022</li>
+    </ul>
+  </section>
+  
+  <section aria-label="Call to Action" class="cta animate-section">
+    <button id="contactBtn" aria-label="Contact us about mining smart glasses">Contact Us to Learn More</button>
+  </section>
+</main>
+
+
+<script>
+  // FAQ accordion toggle with transition animation
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    question.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+    question.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.classList.toggle('open');
+      }
+    });
+  });
+
+  // Contact button alert with subtle scale effect handled by CSS
+
+  document.getElementById('contactBtn').addEventListener('click', () => {
+    alert('Thank you for your interest! Please contact us at info@miningsmartglasses.com or call +1 234 567 8900.');
+  });
+
+  // Intersection Observer for fade/slide in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        if (entry.target.classList.contains('feature')) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        } else {
+          entry.target.classList.add('visible');
+        }
+      }
+    });
+  }, {threshold: 0.15});
+
+  document.querySelectorAll('.animate-section').forEach(el => observer.observe(el));
+  document.querySelectorAll('.feature').forEach(el => observer.observe(el));
+  document.querySelectorAll('.history-event').forEach(el => observer.observe(el));
+  document.querySelectorAll('.testimonial').forEach(el => observer.observe(el));
+
+</script>
+
+</body>
+</html>
+

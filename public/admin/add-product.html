@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Product</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #D4B248;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #D4B248;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #bfa032;
+    }
+
+    #productsContainer {
+      max-width: 1000px;
+      margin: 40px auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .product-card {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 220px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .product-card h3 {
+      margin: 10px 0 5px;
+    }
+
+    .product-card span {
+      background-color: #eee;
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Add New Product</h1>
+
+  <form id="addProductForm">
+    <input id="name" type="text" name="name" placeholder="Product Name" required />
+    <textarea id="description" name="description" placeholder="Description" required></textarea>
+    <input id="price" type="number" name="price" placeholder="Price (₹)" required />
+    <input id="category" type="text" name="category" placeholder="Category" required />
+    <input id="imageUrl" type="text" name="imageUrl" placeholder="Image URL" required />
+    <button type="submit">Add Product</button>
+  </form>
+
+  <div id="productsContainer">
+    <!-- Product cards will be shown here -->
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('addProductForm');
+
+      if (form) {
+        form.addEventListener('submit', async function (e) {
+          e.preventDefault();
+
+          const payload = {
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            price: document.getElementById('price').value,
+            category: document.getElementById('category').value,
+            imageUrl: document.getElementById('imageUrl').value,
+          };
+
+          try {
+            const res = await fetch('http://localhost:5000/api/products', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || 'Failed');
+
+            alert('✅ Product added!');
+            form.reset();
+            loadProducts();
+          } catch (err) {
+            console.error(err);
+            alert('❌ Error: ' + err.message);
+          }
+        });
+      }
+
+      async function loadProducts() {
+        try {
+          const response = await fetch('http://localhost:5000/api/products');
+          if (!response.ok) throw new Error('Failed to fetch products');
+          const products = await response.json();
+
+          const container = document.getElementById('productsContainer');
+          container.innerHTML = '';
+
+          if (products.length === 0) {
+            container.innerHTML = '<p>No products available.</p>';
+            return;
+          }
+
+          products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+
+            card.innerHTML = `
+              <img src="${product.imageUrl}" alt="${product.name}" />
+              <h3>${product.name}</h3>
+              <p>${product.description}</p>
+              <p><strong>₹${product.price}</strong></p>
+              <span>${product.category}</span>
+            `;
+
+            container.appendChild(card);
+          });
+
+        } catch (error) {
+          console.error('Error loading products:', error);
+          document.getElementById('productsContainer').innerHTML = '<p>Error loading products.</p>';
+        }
+      }
+
+      loadProducts(); // Load on page load
+    });
+  </script>
+</body>
+</html>

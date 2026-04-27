@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Cart</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+
+    .cart-container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 16px;
+    }
+
+    .cart-details {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .cart-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-info h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .cart-info p {
+      margin: 0;
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .remove-btn {
+      background-color: #ff3b3b;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background-color: #cc0000;
+    }
+
+    .total-section {
+      text-align: right;
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 30px;
+      color: #222;
+    }
+
+    .empty-message {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 40px;
+      color: #666;
+    }
+
+    .action-buttons {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    a.btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      margin-left: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    a.continue-btn {
+      background-color: #ff6600;
+      color: #fff;
+    }
+
+    a.continue-btn:hover {
+      background-color: #e05a00;
+    }
+
+    a.checkout-btn {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+
+    a.checkout-btn:hover {
+      background-color: #27ae60;
+    }
+
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cart-details {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .action-buttons {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Your Shopping Cart</h1>
+
+  <div class="cart-container" id="cartContainer">
+    <!-- Cart items and buttons will be injected here -->
+  </div>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function renderCart() {
+      const container = document.getElementById('cartContainer');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = '<p class="empty-message">Your cart is empty.</p>';
+        return;
+      }
+
+      let totalPrice = 0;
+
+      cart.forEach((item, index) => {
+        totalPrice += parseFloat(item.price);
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+
+        itemDiv.innerHTML = `
+          <div class="cart-details">
+            <img src="${item.imageUrl}" alt="${item.name}">
+            <div class="cart-info">
+              <h3>${item.name}</h3>
+              <p>$${parseFloat(item.price).toFixed(2)}</p>
+            </div>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+        `;
+
+        container.appendChild(itemDiv);
+      });
+
+      const totalDiv = document.createElement('div');
+      totalDiv.className = 'total-section';
+      totalDiv.textContent = `Total: $${totalPrice.toFixed(2)}`;
+      container.appendChild(totalDiv);
+
+      const buttonsWrapper = document.createElement('div');
+      buttonsWrapper.className = 'action-buttons';
+
+      const continueBtn = document.createElement('a');
+      continueBtn.href = 'cards.html';
+      continueBtn.className = 'btn continue-btn';
+      continueBtn.textContent = 'Continue Shopping';
+
+      const checkoutBtn = document.createElement('a');
+      checkoutBtn.href = 'checkout.html';
+      checkoutBtn.className = 'btn checkout-btn';
+      checkoutBtn.textContent = 'Proceed to Checkout';
+
+      buttonsWrapper.appendChild(continueBtn);
+      buttonsWrapper.appendChild(checkoutBtn);
+      container.appendChild(buttonsWrapper);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+
+</body>
+</html>

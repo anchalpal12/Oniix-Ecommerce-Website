@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shop - Glasses Store</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: #fff;
+      padding: 10px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #222;
+    }
+
+    nav a {
+      text-decoration: none;
+      background-color: #ff6600;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    /* Heading */
+    h1.page-heading {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #222;
+      text-align: center;
+      margin: 40px 0 20px;
+      animation: slideInFromTop 1s ease forwards;
+    }
+
+    @keyframes slideInFromTop {
+      0% {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Product Cards */
+    .products-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 250px;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-align: center;
+      color: #333;
+    }
+
+    .price {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #2ecc71;
+      margin-bottom: 8px;
+    }
+
+    .stars {
+      color: #f39c12;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .card-buttons {
+      display: flex;
+      width: 100%;
+    }
+
+    .action-btn {
+      flex: 1;
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 0;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #e05a00;
+    }
+
+    @media (max-width: 600px) {
+      h1.page-heading {
+        font-size: 2rem;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      background-color: #000;
+      color: #fff;
+      padding: 40px 60px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .footer-column {
+      flex: 1 1 200px;
+      font-size: 14px;
+      line-height: 1.6;
+      padding-left: 30px;
+    }
+
+    .logo-column .logo {
+      width: 250px;
+      height: 150px;
+      filter: invert(100%);
+    }
+
+    .policy-column p,
+    .contact-column p {
+      margin: 8px 0;
+    }
+
+    .policy-column a,
+    .contact-column a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .footer-heading {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .newsletter-column input[type="email"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      border: none;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      font-size: 12px;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      margin-top: 2px;
+    }
+
+    .newsletter-column button {
+      background-color: #fff;
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">Glasses Store</div>
+    <a href="cart.html">🛒 View Cart (<span id="cartCount">0</span>)</a>
+  </nav>
+
+  <!-- Heading -->
+  <h1 class="page-heading">Our Products</h1>
+
+  <!-- Product Cards -->
+  <div class="products-container" id="productsContainer"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-column logo-column">
+        <img src="./images/black.png" alt="Onix Logo" class="logo" />
+      </div>
+
+      <div class="footer-column contact-column">
+        <p>123-456-7890<br>info@mycart.com</p>
+        <p>500 Terry Francine Street, 6th Floor, San Francisco, CA 94158</p>
+      </div>
+
+      <div class="footer-column policy-column">
+        <p><a href="#">Privacy Policy</a></p>
+        <p><a href="#">Accessibility Statement</a></p>
+        <p><a href="#">Shipping Policy</a></p>
+        <p><a href="#">Terms & Conditions</a></p>
+        <p><a href="#">Refund Policy</a></p>
+        <p><a href="mailto:info@mycart.com">info@mycart.com</a></p>
+      </div>
+
+      <div class="footer-column newsletter-column">
+        <p class="footer-heading">Stay Connected with Us</p>
+        <form>
+          <input type="email" placeholder="Email*" required />
+          <div class="checkbox-container">
+            <input type="checkbox" id="subscribe" required />
+            <label for="subscribe">Yes, subscribe me to your newsletter.*</label>
+          </div>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function updateCartCount() {
+      document.getElementById('cartCount').textContent = cart.length;
+    }
+
+    function addToCart(product) {
+      cart.push(product);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function renderStars(rating) {
+      return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    }
+
+    async function fetchProducts() {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) throw new Error('Failed to fetch products');
+
+        const products = await response.json();
+        const container = document.getElementById('productsContainer');
+
+        products.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${product.imageUrl}" alt="${product.name}" />
+            <div class="card-body">
+              <div class="product-name">${product.name}</div>
+              <div class="price">$${parseFloat(product.price).toFixed(2)}</div>
+              <div class="stars">${renderStars(4)}</div>
+              <div class="card-buttons">
+                <button class="action-btn">Add to Cart</button>
+              </div>
+            </div>
+          `;
+
+          card.querySelector('.action-btn').addEventListener('click', () => addToCart(product));
+          container.appendChild(card);
+        });
+
+        updateCartCount();
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+
+    fetchProducts();
+  </script>
+
+</body>
+</html>

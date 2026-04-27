@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern Navbar</title>
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./style.css" />
+
+</head>
+
+<body>
+
+  <header>
+    <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop()" onmouseout="this.start()">
+      Limited Time Offer: Get 25% OFF on All Mining Glasses – Protect Your Vision with Cutting-Edge Technology!
+    </marquee>
+  </header>
+
+
+  <div id="popup" aria-modal="true" role="dialog" aria-labelledby="popupTitle" aria-describedby="errorText successText">
+  <div class="popup-content">
+    <span class="close" role="button" aria-label="Close popup" tabindex="0" onclick="closePopup()">&times;</span>
+    
+    <h2 id="popupTitle">Get 50% Off</h2>
+    
+    <form id="subscribeForm" novalidate>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        autocomplete="email"
+        placeholder="Enter your email"
+        required
+        aria-required="true"
+        aria-describedby="errorText successText"
+      />
+      <button type="submit" class="color">Get Coupon</button>
+
+      <p id="errorText" role="alert" aria-live="assertive" style="color: red;"></p>
+      <p id="successText" role="alert" aria-live="polite" style="color: green;"></p>
+    </form>
+
+    <!-- Coupon Display Area -->
+    <div id="couponCodeDisplay" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem; color: #333;"></div>
+  </div>
+</div>
+
+
+
+  <nav>
+    <div class="logo2" tabindex="0">
+
+      <img src="./images/black.png" height="90px">
+    </div>
+    <div class="nav-links" role="navigation" aria-label="Primary navigation">
+  <a href="./index.html" tabindex="0">Home</a>
+  <a href="./about2.html" tabindex="0">About</a>
+  <a href="./cards.html" tabindex="0">shop</a>
+  <a href="./contactus.html" tabindex="0">Contact Us</a>
+  <a href="./login.html" tabindex="0" class="nav-btn login-btn">Login</a>
+  <a href="./signup.html" tabindex="0" class="nav-btn signup-btn">Signup</a>
+  <button id="logoutBtn">Logout</button>
+</div>
+
+    <div class="icon-bar" aria-label="Icon actions">
+
+
+      <i class="fas fa-search" title="Search" tabindex="0" role="button"></i>
+      <i class="fas fa-heart" title="User Profile" tabindex="0" role="button"></i>
+      <i class="fas fa-shopping-cart" title="Shopping Cart" tabindex="0" role="button"></i>
+      <i class="fas fa-user" title="Menu" tabindex="0" role="button"></i>
+    </div>
+  </nav>
+
+  <div class="hero-section">
+    <div class="overlay"></div>
+    <div class="section">
+      <h1>Revolutionize Mining with<br> Smart Glasses</h1>
+      <h4>Rugged. Smart. Built for Miners</h4>
+      <div class="buttons">
+        <button type="button" class="btn">Learn more</button>
+        <a href="./cards.html"><button type="button" class="btn2">Shop now</button></a>
+      </div>
+
+    </div>
+
+
+
+
+  </div>
+
+  <div class="cards">
+    <div class="cards1">
+      <img src="./images/ffcc7a97-97cd-4899-b1d1-7d217430c7b6.jpg" />
+      <div class="head">
+        <h1>Thick Rim Glasses<br>₹2,499</h1>
+      </div>
+    </div>
+
+    <div class="cards1">
+      <img src="./images/50746b80-92c1-420b-9bcc-a37fea89c3bd.jpg" />
+      <div class="head">
+        <h1>Smart Mining Glasses<br>₹2,000</h1>
+      </div>
+    </div>
+
+    <div class="cards1">
+      <img src="./images/glllll.jpg" />
+      <div class="head">
+        <h1> Half Rim Glasses<br>₹1,000</h1>
+      </div>
+    </div>
+
+    <div class="cards1">
+      <img src="./images/sec3.jpg" />
+      <div class="head">
+        <h1>RealWear Navigator Z1<br>₹499</h1>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+  <!-- <div class="button-container">
+    <button type="button" class="btn" >Learn more</button>
+  </div> -->
+  <div class="image-container">
+    <div class="right">
+      <div class="first">
+        <h1>Our Glasses</h1>
+        <p>Dedicated to providing top-quality smart glasses for<br>
+          miners and underground workers, ensuring safety and <br>
+          efficiency in challenging environments</p>
+      </div>
+      <div class="sec">
+        <h1>Who We Are</h1>
+        <p>Dedicated to providing top-quality smart glasses for<br>
+          miners and underground workers, ensuring safety and <br>
+          efficiency in challenging environments</p>
+      </div>
+      <div class="sec">
+        <h1>The Vision</h1>
+        <p>Dedicated to providing top-quality smart glasses for<br>
+          miners and underground workers, ensuring safety and <br>
+          efficiency in challenging environments</p>
+      </div>
+
+    </div>
+    <div class="left">
+      <img src="./images/0a64963e-298b-4da8-88ff-9fcb856db7be.jpg" height="600px" width="600px" />
+    </div>
+  </div>
+  <div class="first-sec">
+    <div class="big">
+      <h1>The Glasses</h1>
+
+    </div>
+    <div class="para">
+      <h3>Innovative Eyewear Designs</h3>
+      <p>Designed to withstand harsh conditions, our glasses<br>
+        provide reliable protection and superior visibility for,<br>
+        enhanced performance and safety</p>
+
+    </div>
+
+
+  </div>
+  <div class="image2-container">
+    <div class="image-left">
+      <img src="./images/52d353be-ddcd-4bf5-a5d3-72763d22638f.jpg" alt="Yellow Mining Glasses" />
+    </div>
+
+    <div class="text-right">
+      <div class="text-content">
+        <h2>Durability</h2>
+        <h4>Built to Last</h4>
+        <p>
+          Designed to withstand harsh conditions, our glasses provide reliable protection<br>
+          and superior visibility for enhanced performance and safety.
+        </p>
+        <a href="#" class="buy-btn">Buy Now</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container2">
+    <button type="button" class="btn">Learn more</button>
+  </div>
+
+
+
+  <div class="icon-card">
+    <div class="header">
+      <h1>ENJOY A SMOOTH SHOPPING EXPERIENCE</h1>
+      <h4>Discover our online and in-store services</h4>
+    </div>
+
+    <div class="icon">
+      <div class="icon-box" onmouseover="rotateCard(this)" onmouseout="resetCard(this)">
+        <img src="./images/home.jpg" height="150px">
+        <h3>Buy Online</h3>
+        <h3>Pick up in store</h3>
+        <button class="discover">Discover More</button>
+      </div>
+
+      <div class="icon-box" onmouseover="rotateCard(this)" onmouseout="resetCard(this)">
+        <img src="./images/car.jpg" height="150px">
+        <h3>Buy Online</h3>
+        <h3>Pick up in store</h3>
+        <button class="discover">Discover More</button>
+      </div>
+
+      <div class="icon-box" onmouseover="rotateCard(this)" onmouseout="resetCard(this)">
+        <img src="./images/circle.jpg" height="150px">
+        <h3>Buy Online</h3>
+        <h3>Pick up in store</h3>
+        <button class="discover">Discover More</button>
+      </div>
+
+      <div class="icon-box" onmouseover="rotateCard(this)" onmouseout="resetCard(this)">
+        <img src="./images/bus.jpg" height="150px">
+        <h3>Buy Online</h3>
+        <h3>Pick up in store</h3>
+        <button class="discover">Discover More</button>
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="newsletter-container">
+    <h2 class="newsletter-heading">
+      ENJOY THE ONES COMMUNITY AND GET A SPECIAL WELCOME REWARD.
+    </h2>
+
+  <form id="newsletterForm">
+  <input type="email" id="newsletterEmail" placeholder="Enter your email" /><br/><br/>
+  <button type="submit">Subscribe</button>
+  <p id="newsletterMessage"></p>
+</form>
+
+
+
+    <p id="responseMsg" class="response-message"></p>
+  </div>
+
+
+
+
+
+<br>
+<br>
+ 
+
+  <section class="about-section">
+    <div class="about-text">
+      <h1>About Us</h1>
+      <p>We design advanced tech for underground warriors. <br>
+        Our Smart Mining Glasses empower miners with real-time information, built-in safety features, and rugged
+        durability — built for the toughest jobs</p>
+    </div>
+    <div class="about-image">
+      <img src="./images/g.jpg" alt="Smart Glasses">
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-column logo-column">
+        <img src="./images/black.png" alt="Onix Logo" class="logo" />
+      </div>
+
+      <div class="footer-column contact-column">
+        <p>123-456-7890<br>info@mycart.com</p>
+        <p>500 Terry Francine Street, 6th Floor, San Francisco, CA 94158</p>
+      </div>
+
+      <div class="footer-column policy-column">
+        <p><a href="#">Privacy Policy</a></p>
+        <p><a href="#">Accessibility Statement</a></p>
+        <p><a href="#">Shipping Policy</a></p>
+        <p><a href="#">Terms & Conditions</a></p>
+        <p><a href="#">Refund Policy</a></p>
+        <p><a href="mailto:info@mycart.com">info@mycart.com</a></p>
+      </div>
+
+      <div class="footer-column newsletter-column">
+        <p class="footer-heading">Stay Connected with Us</p>
+        <form>
+          <input type="email" placeholder="Email*" required />
+          <div class="checkbox-container">
+            <input type="checkbox" id="subscribe" required />
+            <label for="subscribe">Yes, subscribe me to your newsletter.*</label>
+          </div>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </footer>
+  <script src="./script.js"></script>
+</body>
+
+</html>

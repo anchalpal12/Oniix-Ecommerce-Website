@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Discount Subscribers</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
+    h1 { margin-bottom: 16px; }
+    button, input[type="text"] {
+      margin-bottom: 20px;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: 1px solid #444;
+      background-color: #fff;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background-color: #eee;
+    }
+    input[type="text"] {
+      width: 300px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background-color: #f4f4f4;
+      cursor: pointer;
+    }
+    #loading {
+      margin-top: 20px;
+      font-style: italic;
+      color: #666;
+    }
+    #errorMsg {
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Discount Subscribers</h1>
+  <button onclick="window.history.back()">Go Back</button>
+  <input type="text" id="searchInput" placeholder="Search by email or coupon..." onkeyup="filterTable()">
+  <button onclick="exportToCSV()">Export to CSV</button>
+
+  <div id="loading">Loading subscribers...</div>
+  <div id="errorMsg"></div>
+
+  <table id="subscribersTable" style="display:none;">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Email ▲▼</th>
+        <th onclick="sortTable(1)">Coupon Code ▲▼</th>
+        <th onclick="sortTable(2)">Subscribed At ▲▼</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let subscriberData = [];
+
+    async function fetchSubscribers() {
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('errorMsg');
+      const table = document.getElementById('subscribersTable');
+      const tbody = table.querySelector('tbody');
+
+      loadingEl.style.display = 'block';
+      errorEl.textContent = '';
+      table.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/discount-subscribers');
+        if (!res.ok) throw new Error(`Failed to fetch subscribers (status: ${res.status})`);
+
+        const data = await res.json();
+        subscriberData = data.subscribers || [];
+
+        if (subscriberData.length === 0) {
+          errorEl.textContent = 'No subscribers found.';
+        } else {
+          populateTable(subscriberData);
+          table.style.display = 'table';
+        }
+      } catch (error) {
+        errorEl.textContent = 'Error loading subscribers: ' + error.message;
+      } finally {
+        loadingEl.style.display = 'none';
+      }
+    }
+
+    function populateTable(data) {
+      const tbody = document.getElementById('subscribersTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      data.forEach(sub => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${sub.email || '(no email)'}</td>
+          <td>${sub.couponCode || '(not generated)'}</td>
+          <td>${new Date(sub.createdAt || sub.subscribedAt || new Date()).toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterTable() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = subscriberData.filter(sub =>
+        sub.email?.toLowerCase().includes(input) ||
+        sub.couponCode?.toLowerCase().includes(input)
+      );
+      populateTable(filtered);
+    }
+
+    function sortTable(colIndex) {
+      const dir = sortTable.directions?.[colIndex] === 'asc' ? 'desc' : 'asc';
+      sortTable.directions = { [colIndex]: dir };
+      subscriberData.sort((a, b) => {
+        const aVal = colIndex === 0 ? a.email : colIndex === 1 ? a.couponCode : a.subscribedAt || a.createdAt;
+        const bVal = colIndex === 0 ? b.email : colIndex === 1 ? b.couponCode : b.subscribedAt || b.createdAt;
+        return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      });
+      populateTable(subscriberData);
+    }
+
+    function exportToCSV() {
+      const rows = [
+        ['Email', 'Coupon Code', 'Subscribed At'],
+        ...subscriberData.map(sub => [
+          sub.email || '',
+          sub.couponCode || '',
+          new Date(sub.createdAt || sub.subscribedAt || new Date()).toLocaleString()
+        ])
+      ];
+
+      const csvContent = rows.map(e => e.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', 'discount-subscribers.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    fetchSubscribers();
+  </script>
+</body>
+</html>
