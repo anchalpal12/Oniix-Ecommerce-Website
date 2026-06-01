@@ -47,23 +47,16 @@ npm start
 ```
 Serves React build from Express at http://localhost:5000
 
-## Environment Variables
 
-```env
-PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/Onix
-JWT_SECRET=your_long_random_secret
-CLIENT_URL=http://localhost:5173
-RESEND_API_KEY=          # optional — order emails
-RESEND_FROM_EMAIL=       # optional
-```
+
+
 
 ## Admin Access
 
 ```bash
 npm run reset-admin
 ```
-Default: **admin@onix.com** / **Admin@123456**
+
 
 ## API Overview
 
