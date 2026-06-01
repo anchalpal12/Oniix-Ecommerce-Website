@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Learn more about Mining Smart Glasses, our mission, advanced technology, company history, and commitment to safety and sustainability in the mining industry." />
 <title>About Mining Smart Glasses</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="./style.css" />
 <style>
   /* Reset */
   * {
@@ -12,20 +15,18 @@
   
   body {
     margin: 0;
-    background-color:white;
-    /* color: #eee; */
+    background-color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    padding: 40px 20px;
     letter-spacing: 0.03em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   
-  header {
+  .about-header {
     text-align: center;
     margin-bottom: 60px;
-    user-select:none;
+    user-select: none;
 
     /* Header fade in on load */
     opacity: 0;
@@ -34,16 +35,17 @@
     animation-delay: 0.15s;
   }
   
-  header h1 {
+  .about-header h1 {
     font-size: 3.2rem;
     font-weight: 700;
-    color:black;
+    color: black;
     text-shadow: 0 0 10px rgba(255,255,255,0.12);
   }
   
   main {
     max-width: 900px;
     margin: 0 auto;
+    padding: 40px 20px;
   }
 
   section {
@@ -61,11 +63,11 @@
   h2 {
     font-size: 2.4rem;
     font-weight: 700;
-    border-bottom: 2px solid #fafafa;
+    border-bottom: 2px solid #e0e0e0;
     padding-bottom: 8px;
     margin-bottom: 24px;
     color: black;
-    user-select:none;
+    user-select: none;
 
     /* Subtle text shadow on hover */
     transition: text-shadow 0.4s ease;
@@ -103,8 +105,18 @@
     opacity: 0;
     transform: translateY(30px);
   }
-  .feature p{
+  .feature p {
     color: white;
+  }
+  .feature img {
+    height: 150px;
+    width: 100%;
+    object-fit: contain;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+  }
+  .feature:hover img {
+    transform: scale(1.05);
   }
   .feature.visible {
     opacity: 1;
@@ -205,16 +217,25 @@
     padding: 18px 22px;
     border: 2px dotted orange;
     cursor: pointer;
-    user-select:none;
-    /* Smooth transition for background change */
-    transition: background-color 0.3s ease;
+    user-select: none;
+    /* Smooth transition for background and color change */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   .faq-item:hover {
-    background-color:orange;
+    background-color: orange;
     color: white;
+    border-color: orange;
   }
   .faq-item.open {
     background-color: #333;
+    color: white;
+    border-color: #333;
+  }
+  .faq-item.open .faq-question {
+    color: white;
+  }
+  .faq-item.open .faq-answer {
+    color: #eee;
   }
   .faq-question {
     font-weight: 700;
@@ -260,8 +281,7 @@
   }
   
   .cta button {
-    background-color:white;
-    border: none;
+    background-color: white;
     color: #121212;
     font-weight: 700;
     font-size: 1.3rem;
@@ -269,17 +289,15 @@
     border-radius: 12px;
     border: 2px dotted orange;
     cursor: pointer;
-    user-select:none;
- 
-    transition: background-color 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease;
+    user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease;
   }
   
   .cta button:hover,
   .cta button:focus {
-    background-color:black;
+    background-color: black;
     color: white;
-    border: none;
-  
+    border: 2px solid black;
     outline: none;
     transform: scale(1.05);
   }
@@ -296,24 +314,101 @@
   }
 
   /* Responsive */
+  @media (max-width: 992px) {
+    .about-header h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+    }
+    h2 {
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
+    }
+    .timeline::before {
+      left: 12px;
+    }
+    .timeline-item {
+      padding-left: 40px;
+    }
+  }
+
   @media (max-width: 720px) {
     .features {
       flex-direction: column;
       gap: 35px;
     }
     main {
-      padding: 0 10px;
+      padding: 20px 15px;
+    }
+    .cta button {
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 24px;
+      font-size: 1.1rem;
     }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>About Us</h1>
-</header>
+  <!-- Header Banner / Marquee -->
+  <header>
+    <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop()" onmouseout="this.start()">
+      Limited Time Offer: Get 25% OFF on All Mining Glasses – Protect Your Vision with Cutting-Edge Technology!
+    </marquee>
+  </header>
+
+  <!-- Discount Coupon Popup -->
+  <div id="popup" aria-modal="true" role="dialog" aria-labelledby="popupTitle" aria-describedby="errorText successText" style="display: none;">
+    <div class="popup-content">
+      <span class="close" role="button" aria-label="Close popup" tabindex="0">&times;</span>
+      <h2 id="popupTitle">Get 50% Off</h2>
+      <form id="subscribeForm" novalidate>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          autocomplete="email"
+          placeholder="Enter your email"
+          required
+          aria-required="true"
+          aria-describedby="errorText successText"
+        />
+        <button type="submit" class="color">Get Coupon</button>
+        <p id="errorText" role="alert" aria-live="assertive" style="color: red;"></p>
+        <p id="successText" role="alert" aria-live="polite" style="color: green;"></p>
+      </form>
+      <div id="couponCodeDisplay" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem; color: #333;"></div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav id="mainNav">
+    <div class="logo2" tabindex="0">
+      <img src="./images/black.png" alt="Onix logo">
+    </div>
+    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <div class="nav-links" id="navLinks" role="navigation" aria-label="Primary navigation">
+      <a href="./index.html" tabindex="0">Home</a>
+      <a href="./about2.html" tabindex="0">About</a>
+      <a href="./cards.html" tabindex="0">shop</a>
+      <a href="./contactus.html" tabindex="0">Contact Us</a>
+      <a href="./login.html" tabindex="0" class="nav-btn login-btn">Login</a>
+      <a href="./signup.html" tabindex="0" class="nav-btn signup-btn">Signup</a>
+      <button id="logoutBtn">Logout</button>
+    </div>
+    <div class="icon-bar" aria-label="Icon actions">
+      <i class="fas fa-search" title="Search" tabindex="0" role="button"></i>
+      <i class="fas fa-heart" title="User Profile" tabindex="0" role="button"></i>
+      <i class="fas fa-shopping-cart" title="Shopping Cart" tabindex="0" role="button"></i>
+      <i class="fas fa-user" title="Menu" tabindex="0" role="button"></i>
+    </div>
+  </nav>
 
 <main>
+  
+  <div class="about-header">
+    <h1>About Us</h1>
+  </div>
   
   <section aria-label="Company Overview" class="animate-section">
     <h2>Our Mission</h2>
@@ -446,49 +541,79 @@
   </section>
 </main>
 
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-column logo-column">
+        <img src="./images/black.png" alt="Onix Logo" class="logo" />
+      </div>
 
-<script>
-  // FAQ accordion toggle with transition animation
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    question.addEventListener('click', () => {
-      item.classList.toggle('open');
-    });
-    question.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
+      <div class="footer-column contact-column">
+        <p>123-456-7890<br>info@mycart.com</p>
+        <p>500 Terry Francine Street, 6th Floor, San Francisco, CA 94158</p>
+      </div>
+
+      <div class="footer-column policy-column">
+        <p><a href="#">Privacy Policy</a></p>
+        <p><a href="#">Accessibility Statement</a></p>
+        <p><a href="#">Shipping Policy</a></p>
+        <p><a href="#">Terms & Conditions</a></p>
+        <p><a href="#">Refund Policy</a></p>
+        <p><a href="mailto:info@mycart.com">info@mycart.com</a></p>
+      </div>
+
+      <div class="footer-column newsletter-column">
+        <p class="footer-heading">Stay Connected with Us</p>
+        <form id="newsletterForm">
+          <input type="email" id="newsletterEmail" placeholder="Email*" required />
+          <div class="checkbox-container">
+            <input type="checkbox" id="subscribe" required />
+            <label for="subscribe" style="color: white;">Yes, subscribe me to your newsletter.*</label>
+          </div>
+          <button type="submit" class="sub">Subscribe</button>
+          <p id="newsletterMessage"></p>
+        </form>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+  <script>
+    // FAQ accordion toggle with transition animation
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
         item.classList.toggle('open');
-      }
+      });
+      question.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.classList.toggle('open');
+        }
+      });
     });
-  });
 
-  // Contact button alert with subtle scale effect handled by CSS
+    // Contact button redirects to Contact Us page
+    document.getElementById('contactBtn').addEventListener('click', () => {
+      window.location.href = './contactus.html';
+    });
 
-  document.getElementById('contactBtn').addEventListener('click', () => {
-    alert('Thank you for your interest! Please contact us at info@miningsmartglasses.com or call +1 234 567 8900.');
-  });
-
-  // Intersection Observer for fade/slide in animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting) {
-        if (entry.target.classList.contains('feature')) {
+    // Intersection Observer for fade/slide in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
           entry.target.classList.add('visible');
           observer.unobserve(entry.target);
-        } else {
-          entry.target.classList.add('visible');
         }
-      }
-    });
-  }, {threshold: 0.15});
+      });
+    }, { threshold: 0.15 });
 
-  document.querySelectorAll('.animate-section').forEach(el => observer.observe(el));
-  document.querySelectorAll('.feature').forEach(el => observer.observe(el));
-  document.querySelectorAll('.history-event').forEach(el => observer.observe(el));
-  document.querySelectorAll('.testimonial').forEach(el => observer.observe(el));
-
-</script>
+    document.querySelectorAll('.animate-section').forEach(el => observer.observe(el));
+    document.querySelectorAll('.feature').forEach(el => observer.observe(el));
+    document.querySelectorAll('.history-event').forEach(el => observer.observe(el));
+    document.querySelectorAll('.testimonial').forEach(el => observer.observe(el));
+  </script>
 
 </body>
 </html>

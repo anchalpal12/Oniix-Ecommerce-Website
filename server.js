@@ -1,81 +1,81 @@
-const express = require('express');
 const http = require('http');
 const mongoose = require('mongoose');
 const { Server } = require('socket.io');
-const userRoutes = require('./routes/userRoutes');
+const app = require('./app');
+const env = require('./config/env');
+const logger = require('./utils/logger');
 const User = require('./models/User');
-const newsletterRoutes = require('./routes/newsletterRoutes');
-const discountRoutes = require('./routes/discountRoutes'); // Adjust path as needed
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
+const { setEmitUserCount } = require('./utils/socketEvents');
 
-
-
-require('dotenv').config();
-
-
-
-
-
-const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: [env.clientUrl, 'http://localhost:5000'],
     methods: ['GET', 'POST'],
   },
 });
 
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(express.json());
-app.use(express.static('public'));
-
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/newsletter-subscribers', require('./routes/newsletterRoutes'));
-app.use('/api/discount-subscribers', require('./routes/discountRoutes'));
-app.use('/api/products', productRoutes);
-app.use('/uploads', express.static('uploads'));
-app.use('/api/orders', orderRoutes);
-
-
-// Global reference
 global._io = io;
-
-// MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/Onix', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('✅ MongoDB connected');
-  emitUserCount();
-})
-.catch((err) => console.error('❌ MongoDB connection error:', err));
-
-// Socket.IO connection
-io.on('connection', (socket) => {
-  console.log('📡 Client connected:', socket.id);
-  emitUserCount();
-
-  socket.on('disconnect', () => {
-    console.log('❎ Client disconnected:', socket.id);
-  });
-});
 
 async function emitUserCount() {
   try {
     const count = await User.countDocuments();
     io.emit('userCountUpdated', { count });
   } catch (err) {
-    console.error('❗ Error emitting user count:', err.message);
+    logger.warn({ err }, 'Failed to emit user count');
   }
 }
 
-// Start the server
-server.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+setEmitUserCount(emitUserCount);
+
+io.on('connection', (socket) => {
+  logger.debug({ socketId: socket.id }, 'Client connected');
+  emitUserCount();
+  socket.on('disconnect', () => logger.debug({ socketId: socket.id }, 'Client disconnected'));
 });
+
+async function start() {
+  await mongoose.connect(env.mongodbUri);
+  logger.info('MongoDB connected');
+  await emitUserCount();
+
+  server.listen(env.port, () => {
+    logger.info({ port: env.port, clientUrl: env.clientUrl }, 'API server running');
+  });
+}
+
+function shutdown(signal) {
+  logger.info({ signal }, 'Shutting down gracefully');
+  server.close(async () => {
+    await mongoose.connection.close(false);
+    logger.info('Server closed');
+    process.exit(0);
+  });
+
+  setTimeout(() => {
+    logger.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10_000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+process.on('unhandledRejection', (reason) => {
+  logger.error({ err: reason }, 'Unhandled promise rejection');
+});
+
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception');
+  process.exit(1);
+});
+
+if (require.main === module) {
+  start().catch((err) => {
+    logger.fatal({ err }, 'Failed to start server');
+    process.exit(1);
+  });
+}
+
+module.exports = { app, server, start };

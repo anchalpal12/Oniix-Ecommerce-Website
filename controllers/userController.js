@@ -1,148 +1,158 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const { emitUserCount } = require('../server'); // For real-time updates
+const { emitUserCount } = require('../utils/socketEvents');
+const { getJwtSecret } = require('../middleware/auth');
+const { success, error } = require('../utils/apiResponse');
 
-// Signup controller
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 exports.signup = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ message: 'All fields are required' });
+  if (!name || !email || !password) {
+    return error(res, 'Name, email, and password are required', 400);
+  }
+
+  if (!EMAIL_REGEX.test(email)) {
+    return error(res, 'Invalid email format', 400);
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return res.status(409).json({ message: 'Email already exists' });
+      return error(res, 'Email already exists', 409);
     }
 
-    const newUser = new User({ name, email, password, role });
+    const newUser = new User({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password,
+      role: 'user',
+    });
     await newUser.save();
 
-    // Emit user count but don’t block signup on error
-    emitUserCount().catch(err =>
+    emitUserCount().catch((err) =>
       console.warn('⚠️ emitUserCount failed after signup:', err.message)
     );
 
-    res.status(201).json({ message: 'Signup successful' });
+    return success(res, null, 'Signup successful', 201);
   } catch (err) {
     console.error('❗ Signup error:', err);
-    res.status(500).json({ message: 'Server error during signup' });
+    return error(res, 'Server error during signup', 500);
   }
 };
 
-// Login controller
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password required' });
+    return error(res, 'Email and password required', 400);
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return error(res, 'Invalid email or password', 401);
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return error(res, 'Invalid email or password', 401);
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role, name: user.name },
-      process.env.JWT_SECRET || 'your_jwt_secret_key',
-      { expiresIn: '1h' }
+      { id: user._id, role: user.role, name: user.name, email: user.email },
+      getJwtSecret(),
+      { expiresIn: '7d' }
     );
 
-    res.json({
-      message: 'Login successful',
+    return success(res, {
       token,
       role: user.role,
       name: user.name,
-    });
+      email: user.email,
+      _id: user._id,
+    }, 'Login successful');
   } catch (err) {
     console.error('❗ Login error:', err);
-    res.status(500).json({ message: 'Server error during login' });
+    return error(res, 'Server error during login', 500);
   }
 };
 
-// Get total user count
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return error(res, 'User not found', 404);
+    return success(res, user);
+  } catch (err) {
+    return error(res, 'Server error', 500);
+  }
+};
+
 exports.getUserCount = async (req, res) => {
   try {
     const count = await User.countDocuments();
-    res.json({ count });
+    return success(res, { count });
   } catch (err) {
-    console.error('❗ Error fetching user count:', err);
-    res.status(500).json({ message: 'Server error' });
+    return error(res, 'Server error', 500);
   }
 };
 
-// Get all users (excluding passwords)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password');
-    res.json(users);
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    return success(res, users);
   } catch (err) {
-    console.error('❗ Error fetching users:', err);
-    res.status(500).json({ message: 'Server error' });
+    return error(res, 'Server error', 500);
   }
 };
 
-// Update user by ID
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email, role } = req.body;
 
   if (!name || !email || !role) {
-    return res.status(400).json({ message: 'Name, email, and role are required' });
+    return error(res, 'Name, email, and role are required', 400);
+  }
+
+  if (!['user', 'admin'].includes(role)) {
+    return error(res, 'Invalid role', 400);
   }
 
   try {
     const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return error(res, 'User not found', 404);
 
-    user.name = name;
-    user.email = email;
+    user.name = name.trim();
+    user.email = email.toLowerCase().trim();
     user.role = role;
-
     await user.save();
 
-    res.json({ message: 'User updated successfully' });
+    return success(res, null, 'User updated successfully');
   } catch (err) {
     console.error('❗ Error updating user:', err);
-    res.status(500).json({ message: 'Server error' });
+    return error(res, 'Server error', 500);
   }
 };
 
-// Delete user by ID
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findByIdAndDelete(id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (req.user.id === id) {
+      return error(res, 'You cannot delete your own account', 400);
+    }
 
-    // Emit updated user count but don't block on error
-    emitUserCount().catch(err =>
+    const user = await User.findByIdAndDelete(id);
+    if (!user) return error(res, 'User not found', 404);
+
+    emitUserCount().catch((err) =>
       console.warn('⚠️ emitUserCount failed after delete:', err.message)
     );
 
-    res.json({ message: 'User deleted successfully' });
+    return success(res, null, 'User deleted successfully');
   } catch (err) {
     console.error('❗ Error deleting user:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-
-// Get total number of users
-exports.getUserCount = async (req, res) => {
-  try {
-    const count = await User.countDocuments();
-    res.json({ count });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to get user count', error });
+    return error(res, 'Server error', 500);
   }
 };

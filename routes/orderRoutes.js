@@ -1,38 +1,48 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order'); // ✅ FIXED: Add model import
-
+const Order = require('../models/Order');
 const {
   placeOrder,
   getAllOrders,
+  getMyOrders,
   getOrdersByEmail,
+  getOrderById,
   deleteOrder,
   filterOrdersByDate,
+  updateOrderStatus,
+  validateCoupon,
+  createStripeCheckoutSession,
+  completeStripeCheckout,
 } = require('../controllers/orderController');
+const { authenticateToken, authorizeAdmin, authorizeAdminOrSelf } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const {
+  placeOrderRules,
+  checkoutSessionRules,
+  stripeCompleteRules,
+  couponParamRules,
+} = require('../validators/orderValidators');
 
-// ✅ Place a new order
-router.post('/place-order', placeOrder);
+router.post('/place-order', placeOrderRules, validate, placeOrder);
+router.post('/create-checkout-session', checkoutSessionRules, validate, createStripeCheckoutSession);
+router.get('/stripe/complete', stripeCompleteRules, validate, completeStripeCheckout);
+router.get('/validate-coupon/:code', couponParamRules, validate, validateCoupon);
 
-// ✅ Get all orders (Admin only)
-router.get('/all', getAllOrders);
-
-// ✅ Get orders by email (User)
-router.get('/user', getOrdersByEmail);
-
-// ✅ Delete a specific order by ID
-router.delete('/:id', deleteOrder);
-
-// ✅ Filter orders by date range
-router.get('/filter', filterOrdersByDate);
-
-// ✅ Get total order count
-router.get('/count', async (req, res) => {
+router.get('/count', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const count = await Order.countDocuments();
-    res.json({ count });
+    res.json({ success: true, data: { count } });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to get order count', error: err });
+    res.status(500).json({ success: false, message: 'Failed to get order count' });
   }
 });
+
+router.get('/all', authenticateToken, authorizeAdmin, getAllOrders);
+router.get('/mine', authenticateToken, getMyOrders);
+router.get('/user', authenticateToken, authorizeAdminOrSelf, getOrdersByEmail);
+router.get('/filter', authenticateToken, authorizeAdmin, filterOrdersByDate);
+router.get('/:id', authenticateToken, getOrderById);
+router.patch('/:id/status', authenticateToken, authorizeAdmin, updateOrderStatus);
+router.delete('/:id', authenticateToken, authorizeAdmin, deleteOrder);
 
 module.exports = router;

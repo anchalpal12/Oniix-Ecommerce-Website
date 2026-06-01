@@ -1,38 +1,47 @@
 const jwt = require('jsonwebtoken');
+const env = require('../config/env');
+
+function getJwtSecret() {
+  return env.jwtSecret;
+}
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('❌ Authorization header missing or malformed');
-    return res.status(401).json({ message: 'Token required' });
+    return res.status(401).json({ success: false, message: 'Authentication required' });
   }
 
   const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, process.env.JWT_SECRET || 'yoursecretkey', (err, user) => {
+  jwt.verify(token, getJwtSecret(), (err, user) => {
     if (err) {
-      console.log('❌ Invalid token:', err.message);
-      return res.status(403).json({ message: 'Invalid token' });
+      return res.status(403).json({ success: false, message: 'Invalid or expired token' });
     }
-
-    console.log('✅ Token verified. User:', user);
     req.user = user;
     next();
   });
 }
 
 function authorizeAdmin(req, res, next) {
-  console.log('🔍 Checking role:', req.user?.role);
   if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    console.log('❌ Access denied. Not admin.');
-    return res.status(403).json({ message: 'Access denied' });
+    return next();
   }
+  return res.status(403).json({ success: false, message: 'Admin access required' });
+}
+
+function authorizeAdminOrSelf(req, res, next) {
+  if (req.user?.role === 'admin') return next();
+  const email = req.query.email || req.body.email;
+  if (email && req.user?.email && email.toLowerCase() === req.user.email.toLowerCase()) {
+    return next();
+  }
+  return res.status(403).json({ success: false, message: 'Access denied' });
 }
 
 module.exports = {
   authenticateToken,
-  authorizeAdmin
+  authorizeAdmin,
+  authorizeAdminOrSelf,
+  getJwtSecret,
 };

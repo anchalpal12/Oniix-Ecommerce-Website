@@ -1,4 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Mobile navigation toggle
+  const mainNav = document.getElementById('mainNav');
+  const menuToggle = document.getElementById('menuToggle');
+  if (mainNav && menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = mainNav.classList.toggle('nav-open');
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+      const icon = menuToggle.querySelector('i');
+      if (icon) {
+        icon.classList.toggle('fa-bars', !isOpen);
+        icon.classList.toggle('fa-times', isOpen);
+      }
+    });
+    mainNav.querySelectorAll('.nav-links a, .nav-links button').forEach((el) => {
+      el.addEventListener('click', () => {
+        mainNav.classList.remove('nav-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open menu');
+        const icon = menuToggle.querySelector('i');
+        if (icon) {
+          icon.classList.add('fa-bars');
+          icon.classList.remove('fa-times');
+        }
+      });
+    });
+  }
+
  // -------------------------------
 // 1. DISCOUNT SUBSCRIBER - POPUP
 // -------------------------------
@@ -203,6 +231,19 @@ if (subscribeForm) {
       signupBtn?.style.setProperty('display', 'inline-block');
       logoutBtn.style.setProperty('display', 'none');
       window.location.href = 'index.html';
+    });
+  }
+
+  const cartIcon = document.querySelector('.icon-bar .fa-shopping-cart');
+  if (cartIcon) {
+    cartIcon.addEventListener('click', () => {
+      window.location.href = './cart.html';
+    });
+    cartIcon.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        window.location.href = './cart.html';
+      }
     });
   }
 });

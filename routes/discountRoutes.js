@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const DiscountSubscriber = require('../models/DiscountSubscriber');
+const { authenticateToken, authorizeAdmin } = require('../middleware/auth');
 
 // Utility function to generate unique coupon codes
 function generateCouponCode() {
@@ -60,8 +61,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET: Get all discount subscribers (for admin dashboard)
-router.get('/', async (req, res) => {
+// GET: Get all discount subscribers (admin only)
+router.get('/', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const subscribers = await DiscountSubscriber.find().sort({ subscribedAt: -1 });
     res.json({ success: true, subscribers });

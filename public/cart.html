@@ -132,6 +132,18 @@
     }
 
     @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+      }
+
+      .cart-container {
+        padding: 16px;
+      }
+
       .cart-item {
         flex-direction: column;
         align-items: flex-start;
@@ -144,6 +156,16 @@
 
       .action-buttons {
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      a.btn {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
       }
     }
   </style>

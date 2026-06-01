@@ -351,17 +351,45 @@
     border-top: 1px solid #cccccc;
     background-color: #ffffff;
   }
-  @media (max-width: 480px) {
-    main {
-      margin: 2rem 1rem 4rem;
-      padding: 1.8rem 1.5rem;
+  @media (max-width: 768px) {
+    header {
+      font-size: 1.35rem;
+      padding: 1rem;
     }
-    h1 {
-      font-size: 2rem;
+    main {
+      margin: 2rem 1rem 3rem;
+      padding: 2rem 1.5rem;
     }
     .contact-details {
       grid-template-columns: 1fr;
       gap: 1.5rem 0;
+    }
+    #chatWindow {
+      width: min(calc(100vw - 24px), 360px);
+      right: 12px;
+      bottom: 80px;
+    }
+
+    #chatButton {
+      right: 12px;
+      bottom: 12px;
+    }
+    .footer {
+      padding: 2rem 1.25rem;
+    }
+    .footer-column {
+      flex: 1 1 100%;
+      padding-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    main {
+      margin: 1.5rem 0.75rem 3rem;
+      padding: 1.5rem 1rem;
+    }
+    h1 {
+      font-size: 1.75rem;
     }
   }
 
